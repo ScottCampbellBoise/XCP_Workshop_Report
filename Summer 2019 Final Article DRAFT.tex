@@ -4,7 +4,13 @@
 \usepackage{amsmath}  % needed for \tfrac, \bmatrix, etc.
 \usepackage{amsfonts} % needed for bold Greek, Fraktur, and blackboard bold
 \usepackage{graphicx} % needed for figures
-\usepackage{subcaption}
+\usepackage{setspace}
+\usepackage{times}
+\usepackage{relsize}
+\usepackage{framed}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{color}
 
 \begin{document}
 	\title{XCP Computational Physics Workshop Final Report Draft}
@@ -14,11 +20,14 @@
 	\maketitle
 	
 \section{Chapter Abstract}
-	The response function based variance reduction technique outlined is for use in Implicit Monte Carlo (IMC) Thermal Radiation Transport (TRT) problems. It uses first a backwards approximation to fuel a forward approximation to improve the convergence, reliability, and accuracy of the IMC simulations. We were able to demonstrate the improvements resulting from the integration of this method into the open-source branson IMC code developed by Alex Long (\textit{along@lanl.gov}) using modern object-oriented languages. 
+	An improvement for Monte Carlo techniques for analyzing the interactions between a supernova and its circumstellar material are discussed, tested, and analyzed for a simplified geometry using a response function based variance reduction method. The response function method improves the convergence, reliability, and accuracy of the IMC simulations. We were able to demonstrate said improvements resulting from the integration of this method into the open-source branson IMC code developed by Alex Long (\textit{along@lanl.gov}) using modern object-oriented languages. 
 	
 	This report outlines the background, motivation and theory for the method, the algorithmic procedure, initial results, and an analysis of the cases and conditions where the method is useful. 
 	
-\section{Introduction and Theory}
+\section{Introduction}
+	Previous methods for analyzing a supernova and the interactions with its circumstellar medium (CSM) ([CITE]) are focused on the use of next event estimators (NEE).
+	
+\section{Background and Theory}
 	\subsection{Thermal Radiation Transport}
 		The scattering and absorbtion of photons emitted from a material are described by the thermal radiative transfer (TRT) equations: 
 		\begin{equation} \label{Eq: TRT_1}
@@ -43,30 +52,33 @@
 	\subsection{Variance Reduction for IMC}
 		Since Monte Carlo is a stochastic method, there will always be some uncertainty. Inherent drawbacks to IMC methods include slow convergence and large computational requirements [CITE]. Furthermore, IMC is known to break down for complex systems and geometries. Additionally, in cases where a material is optically thick and the distance from source to observation (i.e. a tally surface) is large enough, traditional IMC will fully absorb the particles into the material before they reach the tally, leaving the tally poorly sampled.
 		
-		Due to these issues, variance reduction methods for IMC methods are necessary to provide equivalent answers while using less resources and converging faster. In the IMC code used, three standard variance reduction techniques were incorporated in addition to the response function method. 
+		Due to these issues, variance reduction methods for IMC methods are necessary to provide equivalent answers while using less resources and converging faster. In the IMC code used, three standard variance reduction techniques were incorporated in addition to the response function method. Currently, there are a large variety of variance reduction methods suited to different purposes. Common examples include implicit capture coupled with history termination, splitting and russian roulette, exponential transformation, forced collisions, source biasing, correlated sampling, optical reciprocity, and weight windows [CITE]. 
 		
-		\subsubsection{Implicit Capture}
-			In implicit capture or absorbtion supression, particles are not allowed to be fully absorbed into the material. Instead, at each 'event' (e.g. scattering or boundary crossing) the weight of the particle is adjusted according to the following relationship:
-			\begin{equation}
-				w_{n,~i+1} = w_{n,~i} (1 - \frac{\sigma_{a}}{\sigma_{a} + \sigma_{s}})
-			\end{equation}
-			where $\sigma_{a}$, $\sigma_{s}$ are the absorbtion and scattering cross-sections respectively. Using the fleck factor, the above becomes
-			\begin{equation} \label{Eq: new_E}
-				E_{particle,~i+1} = E_{particle,~i} e^{-\sigma_{a} \cdot f \cdot d_{event}} .
-			\end{equation}
-			where $d_{event}$ is the distance to the next position the particle travels to. Absorbtion suppression allows particles to stay active indefinately, greatly increasing the chance that the particle will make it to the tally surface. However, this method adds significant time complexity as particles then must be continually tracked. To counteract this, a history termination method is used to stop tracking the particle and reduce the complexity. Absorbtion suppression doesn't always guarantee that a tally surface will be well sampled in the case of a high scattering opacity that can mitigate the escaping flux.
-			
-			History termination methods `kill' particles once its energy falls below a set threshold. This method does increase variance, but more significantly reduces the computational complexity by not tracking particles once they no longer significantly contribute to the tally surface.
+		Implicit capture is a dominant method employed in the \textit{branson} code. Implict capture, or absorption supression, adjusts particles weight at every `scattering' event according to the following relationship:
+		\begin{equation}
+			w_{n,~i+1} = w_{n,~i}(1 - \frac{\sigma_{a}}{\sigma_{a} + \sigma_{s}})
+		\end{equation}
+		where $\sigma_{a}$ and $\sigma_{s}$ are the absorption and scattering cross-sections respectively. Using the fleck factor, the above becomes 
+		\begin{equation}
+			E_{particle,~i+1} = E_{particle,~i}e^{-\sigma_{a} \cdot f \cdot d_{event}},
+		\end{equation}
+		where $d_{event}$ is the distance to the next position the particle travels to. Implicit capture allows particles to stay active longer, increasing the likelyhood that a particle reaches the tally surface. 
 		
-		\subsubsection{Source Biasing}
-			Source biasing alters the distribution of the source particles, such that more particles are produced in regions of the space-angle-energy space that are of interest and importance to a particlular problems result. Replacing an unbiased source distribution, $S(\vec{r}, \vec{\Omega}, E)$, with the biased distribution, $S^{\prime}(\vec{r}, \vec{\Omega}, E)$. To produce a particle with a weight of $1$ while maintaining unbiased estimators, the initial particle weight would be 
-			\begin{equation}
-				w = \frac{S(\vec{r}, \vec{\Omega}, E)}{S^{\prime}(\vec{r}, \vec{\Omega}, E)}
-			\end{equation} 
-			for some initial $\vec{r}$, $\vec{\Omega}$, and $E$. This method is useful primarily for problems that have a strong dependence on particle energy and directionality, however, this is not representative of the large marjority of problems and neglects to address the complete absorption of particles that leads to a poory sampled tally.
+		Weight windows are another common variance reduction technique, in which each cell in the problem mesh is given a weight window center bounded by higher and lower values [CITE]. Once a particle enters a new cell, if a particles weight is not within the weight window, one of two processes will occur. If the particle's wright is above the window, it will be split into additional particles. Particles whose weight is below the window will undergo a technique such as Russian Roulette [CITE] to remove the particle from the simulation.  
+		
+		All of the variance reduction methods listed above do not ensure that a tally surface will always be well sampled. In cases where particles have short mean free paths (i.e. traveling through a material with a high opacity), particles are still not guaranteed to pass through the tally surface. To ensure a tally is  well-sampled, ideally all particles would contribute to the tally at least once before being fully absorbed into the material. To this end, a response function in theory will meet this requirement. 
+		
+	\subsection{Next Event Estimators}
+		Next event surface crossing estimators (NXTEVT) are a standard method for analyzing Monte Carlo methods for radiative transfer in supernova events. NXTEVT contributes to a tally surface the expected value of a partilce that will cross through the tally surface. This method is an effective tool to minimize variance in situations where particles have limited histories, and large mean free paths in the problem material [CITE]. 
+		
+		Assuming that a particle is at a position $\vec{r}$, direction $\vec{\Omega}$, and weight $w_{0}$ intersecting a tally with a surface area $S_{tally}$ at a position $\vec{r^{\prime}}$ from the particle, the scored flux $\phi(\mu)$ is given by 
+		\begin{equation}
+			\phi(\mu) = w_{0} \frac{e^{-\int_{\vec{r}}^{\vec{r^{\prime}}} \Sigma_{t}(s)ds}}{S \cdot \mu}
+		\end{equation}
+		where $\mu$ is the angle between $\vec{\Omega}$ and the surface normal at $\vec{r^{\prime}}$, and $\Sigma_{t}$ is the total cross section in the material.
 		
 	\subsection{Response Function Theory}
-		A response function is thought to be an effective variance reduction method (VRM) since it contributes an adjusted energy value to the tally at every scatter event, rather than adding a contribution only once the particle passes through the tally surface. Because of this feature, the tally surface should be well sampled using the response function compared to standard variance redution methods. 
+		A response function is thought to be an effective variance reduction method since it contributes an adjusted energy value to the tally at every scatter event, rather than adding a contribution only once the particle passes through the tally surface. Because of this feature, the tally surface should be well sampled using the response function compared to standard variance redution methods. 
 		
 		A response function attempts to calculate the probability that a particle `survives' to the tally surface following its current trajectory. The weight of the particle based on this probability and current energy should the particle reach the tally surface is calculated by
 		
@@ -75,6 +87,70 @@
 		E_{contribution} = E_{particle}e^{-(\sigma_{r} + \frac{1}{c \Delta t})d_{tally}}
 		\end{equation}
 		where $E_{particle}$ is the current energy of the particle, $\Delta t$ is the current time step, and $d_{tally}$ is the distance of the particle to the tally surface along its path. 
+		
+	\subsection{Supernova and CSM Parameters} \label{sec:sncsmpars}
+		We attempt to model a snapshot of a supernova interacting with a circumstellar medium (CSM). The CSM has high enough mass to theoretically produce a superluminous supernova (e.g. SN 2006gy). The time for the snapshot is chosen to be after the supernova ejecta hits the CSM and produces a shock. This shock ionizes the CSM, which increases the opacity and consequently the optical depth. Moreover, the increase in density from the shock, coincident with the ionized region, also contributes to an increase in the optical depth of the CSM.
+		
+		The approximate properties of each layer near the time of peak luminosity ($\sim70$ days) for model D2 of Moriya, Blinnikov, et al (2013) (hereafter M13) are as follows.
+		
+		Supernova ejecta:
+		\begin{itemize}
+			\item $R_{\rm s, min} = 0$ cm
+			\item $R_{\rm s, max} = 10^{15.829}$ cm
+			\item $\rho_{\rm ej} = 10^{-14}$ g/cm$^3$
+			\item $T_{\rm ej} = 10^4$ K
+			\item $c_v = 10^6$ erg/K/g
+			\item $\kappa_{\rm ej} = 0.3$ cm$^2$/g
+		\end{itemize}
+		
+		Ejecta-CSM shock:
+		\begin{itemize}
+			\item $R_{\rm s, min} = 10^{15.829}$ cm
+			\item $R_{\rm s, max} = 10^{15.831}$ cm
+			\item $\rho_{\rm s} = 10^{-12}$ g/cm$^3$
+			\item $T_{\rm s} = 10^6$ K
+			\item $c_v = 10^6$ erg/K/g
+			\item $\kappa_{\rm s} = 0.3$ cm$^2$/g
+		\end{itemize}
+		
+		CSM (pre-shock):
+		\begin{itemize}
+			\item $R_{\rm s, min} = 10^{15.831}$ cm
+			\item $R_{\rm s, max} = 10^{16}$ cm
+			\item $\rho_{\rm CSM} = 10^{-14}$ g/cm$^3$
+			\item $T_{\rm s} = 10^4$ K
+			\item $c_v = 10^6$ erg/K/g
+			\item $\kappa_{\rm CSM} = 10^{-4}$ cm$^2$/g
+		\end{itemize}
+		
+		For spherical symmetry, these values give masses of about 6, 8.5, and 14 for the interior ejecta, shocked ejecta-CSM, and CSM, respectively, which are on the order of the model values presented by M13. The optical depth through the internal ejecta is about 20, and is about 10 through the shocked ejecta-CSM layer. The preshock CSM is evidently hot enough to be ionized, hence it can contribute another 10 mean-free-paths of optical depth. The spatial width of the shock layer is only 0.46 \% of the radius of the shock, despite providing 1/3 of the total optical depth.
+		
+	\subsection{Rescaling Parameters} \label{sec:rescaling}
+		We may scale adjust dimensions and scale the parameters to simplify setup of input. This can also be of use when attempting to test different types of supernovae conditions, but preserving physical properties or numerical resolution.
+		
+		An adjustment of the overall domain size (radius),
+		\begin{equation}
+			\frac{R}{R_0} \approx 10^{-16} \;\;,
+		\end{equation}
+		where values subscripted with $0$ are unscaled, gives dimensions of O(1 cm). Relevant properties to preserve are the optical depth, light crossing time, and ratio of total time to the absorption-emission timescale. To preserve the light crossing time, we simply scale the total simulation time,
+		\begin{equation}
+			t = \frac{R}{R_0}t_0 \;\;,
+		\end{equation}
+		Similarly, assuming opacity is constant or piecewise-constant, the optical depth is preserved when
+		\begin{equation}
+			\kappa = \kappa_0\frac{R_0}{R} \;\;,
+		\end{equation}
+		where density has canceled from the left and right side. To preserve the ratio of the absorption-emission time scale to the total time, $t$,
+		\begin{equation}
+			t_{ae} = \frac{c_v}{4\kappa acT^4} = \frac{R}{R_0}t_{ae,0}
+			= \frac{R}{R_0}\frac{c_{v,0}}{4\kappa_0 acT^4} \;\;,
+		\end{equation}
+		which implies
+		\begin{equation}
+			c_v = c_{v,0} \;\;.
+		\end{equation}
+		
+		Density and temperature have been left unchanged. The important aspect of this problem is the geometric structure and optical depth. To lower the spatial resolution requirements, the ejecta-CSM shock layer may be spread from 0.4\% to $\sim$10\% of the problem length while preserving optical depth. To do so, the density of the layer can be lowered to compensate for the increased size of the layer.
 		
 \section{Method and Technical Approach}
 	The implementation of the response function variance reduction method largely follows a standard Monte Carlo approach. At the start of the problem, several parameters are defined base on the properties of the materials in the problem domain. The absorption opacity, $\sigma_{a}$, is calculated using the fleck factor:
@@ -124,16 +200,23 @@
 		\item At the end of the time step after all particles have been transported, calculate the energy of all the census particles and redistribute it randomly to a smaller number of representative particles.
 		\item Additionally, the temperature $T$ of each cell is updated at the end of each timestep according to Eq. \ref{Eq: cell_T}.
 			
-		\item Update the time step information, and repeat the above scheme for all time steps.
+		\item Update the time step information, and repeat the above scheme for all time steps. 
 	\end{enumerate}
 
-\section{Verification}
-
+\section{Test Problem}
+	To check the validity of the response function method, a point source problem was devised where the analytic flux was known. 
 
 \section{Results}
 
 
+\section{Applications to Supernova Simulations}
+
+
 \section{Conclusions}
 
+
+\begin{thebibliography}{99}
+	\bibitem{}
+\end{thebibliography}	
 
 \end{document}

@@ -18,23 +18,11 @@
 \section{Supernova and CSM Parameters}
 \label{sec:sncsmpars}
 
-We attempt to model a snapshot of a supernova interacting
-with a circumstellar medium (CSM).
-The CSM has high enough mass to theoretically produce a
-superluminous supernova (e.g. SN 2006gy).
-The time for the snapshot is chosen to be after the
-supernova ejecta hits the CSM and produces a shock.
-This shock ionizes the CSM, which increases the opacity
-and consequently the optical depth.
-Moreover, the increase in density from the shock, coincident
-with the ionized region, also contributes to an increase in
-the optical depth of the CSM.
+We attempt to model a snapshot of a supernova interacting with a circumstellar medium (CSM). The CSM has high enough mass to theoretically produce a superluminous supernova (e.g. SN 2006gy). The time for the snapshot is chosen to be after the supernova ejecta hits the CSM and produces a shock. This shock ionizes the CSM, which increases the opacity and consequently the optical depth. Moreover, the increase in density from the shock, coincident with the ionized region, also contributes to an increase in the optical depth of the CSM.
 
 \vspace{5 mm}
 
-The approximate properties of each layer near the time of
-peak luminosity ($\sim70$ days) for model D2 of Moriya, Blinnikov,
-et al (2013) (hereafter M13) are as follows.
+The approximate properties of each layer near the time of peak luminosity ($\sim70$ days) for model D2 of Moriya, Blinnikov, et al (2013) (hereafter M13) are as follows.
 
 \vspace{5 mm}
 
@@ -68,48 +56,26 @@ CSM (pre-shock):
 \item $\kappa_{\rm CSM} = 10^{-4}$ cm$^2$/g
 \end{itemize}
 
-For spherical symmetry, these values give masses of about 6,
-8.5, and 14 for the interior ejecta, shocked ejecta-CSM, and
-CSM, respectively, which are on the order of the model values
-presented by M13.
-The optical depth through the internal ejecta is about 20, and
-is about 10 through the shocked ejecta-CSM layer.
-The preshock CSM is evidently hot enough to be ionized, hence
-it can contribute another 10 mean-free-paths of optical depth.
-The spatial width of the shock layer is only 0.46 \% of the
-radius of the shock, despite providing 1/3 of the total optical
-depth.
+For spherical symmetry, these values give masses of about 6, 8.5, and 14 for the interior ejecta, shocked ejecta-CSM, and CSM, respectively, which are on the order of the model values presented by M13. The optical depth through the internal ejecta is about 20, and is about 10 through the shocked ejecta-CSM layer. The preshock CSM is evidently hot enough to be ionized, hence it can contribute another 10 mean-free-paths of optical depth. The spatial width of the shock layer is only 0.46 \% of the radius of the shock, despite providing 1/3 of the total optical depth.
 
 \section{Rescaling Parameters}
 \label{sec:rescaling}
 
-We may scale adjust dimensions and scale the parameters to
-simplify setup of input.
-This can also be of use when attempting to test different types
-of supernovae conditions, but preserving physical properties or
-numerical resolution.
+We may scale adjust dimensions and scale the parameters to simplify setup of input. This can also be of use when attempting to test different types of supernovae conditions, but preserving physical properties or numerical resolution.
 
 An adjustment of the overall domain size (radius),
 \begin{equation}
   \frac{R}{R_0} \approx 10^{-16} \;\;,
 \end{equation}
-where values subscripted with $0$ are unscaled, gives dimensions
-of O(1 cm).
-Relevant properties to preserve are the optical depth, light crossing
-time, and ratio of total time to the absorption-emission timescale.
-To preserve the light crossing time, we simply scale the total
-simulation time,
+where values subscripted with $0$ are unscaled, gives dimensions of O(1 cm). Relevant properties to preserve are the optical depth, light crossing time, and ratio of total time to the absorption-emission timescale. To preserve the light crossing time, we simply scale the total simulation time,
 \begin{equation}
   t = \frac{R}{R_0}t_0 \;\;,
 \end{equation}
-Similarly, assuming opacity is constant or piecewise-constant, the
-optical depth is preserved when
+Similarly, assuming opacity is constant or piecewise-constant, the optical depth is preserved when
 \begin{equation}
   \kappa = \kappa_0\frac{R_0}{R} \;\;,
 \end{equation}
-where density has canceled from the left and right side.
-To preserve the ratio of the absorption-emission time scale to
-the total time, $t$,
+where density has canceled from the left and right side. To preserve the ratio of the absorption-emission time scale to the total time, $t$,
 \begin{equation}
   t_{ae} = \frac{c_v}{4\kappa acT^4} = \frac{R}{R_0}t_{ae,0}
   = \frac{R}{R_0}\frac{c_{v,0}}{4\kappa_0 acT^4} \;\;,
@@ -119,13 +85,6 @@ which implies
   c_v = c_{v,0} \;\;.
 \end{equation}
 
-Density and temperature have been left unchanged.
-The important aspect of this problem is the geometric structure
-and optical depth.
-To lower the spatial resolution requirements, the ejecta-CSM
-shock layer may be spread from 0.4\% to $\sim$10\% of the problem
-length while preserving optical depth.
-To do so, the density of the layer can be lowered to compensate for
-the increased size of the layer.
+Density and temperature have been left unchanged. The important aspect of this problem is the geometric structure and optical depth. To lower the spatial resolution requirements, the ejecta-CSM shock layer may be spread from 0.4\% to $\sim$10\% of the problem length while preserving optical depth. To do so, the density of the layer can be lowered to compensate for the increased size of the layer.
 
 \end{document}
