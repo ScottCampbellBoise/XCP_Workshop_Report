@@ -93,7 +93,14 @@
 	\subsection{Next Event Estimators}
 		Next event surface crossing estimators (NXTEVT) are a standard method for analyzing Monte Carlo methods. NXTEVT contributes to a tally surface the expected value of a partilce that will cross through the tally surface. This method is an effective tool to minimize variance in situations where particles have limited histories, and large mean free paths in the problem material~\cite{WD11, LL99, LL05}. 
 		
-		NXTEVT estimators are implemented instead of splitting and Russian Roulette (e.g. weight windows) in order to get a well sampled tally in a small geometric regions. This method is preferred in cases where a limited number of particles reach an area of interest, i.e. tally. For example, this can result from optically thin regions where few collisions occur, mitigating scattering whcih would statistically direct more particles towards the tally region. In this case, particles will be transported further, and consequently, will deposit more energy and be rouletted before they reach they can reach the tally. Additionally, splitting and weight windows does not change a particles direction, furthering the effects described earlier~\cite{BF12}.
+		\begin{figure} [h!]
+			\centering
+			\includegraphics[height=3in]{Figures/nxtevt_visual.png}
+			\caption{A visual demonstrating why splitting is ineffective in optically thin regions: the split particles will all have generally the same direction and will stream with few collisions.}
+			\label{fig:nxtevt_visual}
+		\end{figure}
+		
+		NXTEVT estimators are implemented instead of splitting and Russian Roulette (e.g. weight windows) in order to get a well sampled tally in a small geometric regions. Figure \ref{fig:nxtevt_visual} demonstrates why splitting is ineffective in problems of low opacity. This method is preferred in cases where a limited number of particles reach an area of interest, i.e. tally. For example, this can result from optically thin regions where few collisions occur, mitigating scattering whcih would statistically direct more particles towards the tally region. In this case, particles will be transported further, and consequently, will deposit more energy and be rouletted before they reach they can reach the tally. Additionally, splitting and weight windows does not change a particles direction, furthering the effects described earlier~\cite{BF12}.
 		
 		This method points particles towards the region of interest to increase the sampling of important angles. The tally surface is 'scored' via the following equation: assuming that a particle is at a position $\vec{r}$, direction $\vec{\Omega}$, and weight $w_{0}$ intersecting a tally with a surface area $S_{tally}$ at a position $\vec{r^{\prime}}$ from the particle, the scored flux, $\phi(\mu)$, is given by
 		\begin{equation}
@@ -255,16 +262,14 @@
 	\end{equation}
 	where $\sigma^{2}(x)$ is the variance of the method and $t_{run}$ is the time to run the simulation. A higher FoM for a method indicates a method that produces an answer more efficiently between variance and run time. As in Fig. \ref{fig:point_source_errors}, this plot also illustrates an improvement of the response function over the standard tally: the FoM of the response function is equivalent or better than that of the standard tally. At around $\approx 50k$ particles run through the simulation, the FoM of the response function method consistently exceeds that of the standard tally method by more than a factor of $2$.
 	
-	ADD FIGURE OF THE NUMBER OF PARTICLES THAT CONTRIBUTE TO EACH METHOD HERE
-	
 	\begin{figure} [h!]
 		\centering
-		\includegraphics[height=3in]{Figures/cubanova_flux_var.png}
+		\includegraphics[height=3in]{Figures/point_src_contr.png}
 		\caption{A graph showing the number of particles (or times in the case of the response function) that contribute to the tally. In general, a method will be expected to have a smaller variance with a greater number of partices that contribute to the tally. }
-		\label{fig:cubanova_num_contr}
+		\label{fig:point_src_num_contr}
 	\end{figure}
 	
-	 The resuts of these two measures provides a strong basis for the validity and usefulness of the response function tally for our simplified point source problem. Additionally, the integration of response function theory into the computational method is validated further by Fig. \ref{fig:cubanova_num_contr}. Our response function method has a far greater number of contributions, matching the intended design for the problem types at hand. Considering the impact of these results gives us a strong foundation to test more complex problems.
+	 The resuts of these two measures provides a strong basis for the validity and usefulness of the response function tally for our simplified point source problem. Additionally, the integration of response function theory into the computational method is validated further by Fig. \ref{fig:point_src_num_contr}. Our response function method has a far greater number of contributions ($\approx 40 \%$ greater for the given input variables), matching the intended design for the problem types at hand. Considering the impact of these results gives us a strong foundation to test more complex problems.
 
 \section{Results \& Supernova Applications}
 	This section presents the results of the response fucntion method applied to a simplified supernova problem. The geometry of the supernova is represented as cubic shells for the ease of the generation of an input file. This problem is further refered to as the 'cubanova' problem. This geometry can be seen on the left hand side of Fig. \ref{fig:cubanova_op_a}. The innermost shell (yellow) is the supernova eject, the next out is the Ejecta-CSM Shock (red), followed by the CSM (pre-shock) (green) from Table \ref{tab:supernova_params} surounded by void (blue). The simulation results were compared against standard tally methods as a point of reference. For all the simulations, a spherical tally surface was centered in the problem domain, $(0,0,0)$, with a radius of $2$.
