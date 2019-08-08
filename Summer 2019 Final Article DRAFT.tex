@@ -286,23 +286,23 @@
 	  	Figure \ref{fig:resp_funct_visual} is a visual representation of this process. 
   	
   	\subsection{Forward Transport}
-	    Every particle sourced in a cell over a time step is then transported through the problem using the following scheme:
-		\begin{enumerate}
-			\item Upon its creation, a contribution to the tally is calculated using Eq. \ref{Eq: tally_contr}.
-			\item For each particle, while the particle remains in the problem domain, calculate:
-				\subitem The distance to the next scattering event, $d_{scatter} = -\log{\frac{\xi}{(1 - f)(\sigma_{a} + \sigma_{s})}}$ where $\xi \in [0,1]$ is a uniformly distributed random number, distance to the cell boundary, $d_{boundary}$, distance to the tally surface, $d_{tally}$, and the distance to reach the end of the timestep, $d_{census}$.
-				\subitem The distance to the next `event,' $d_{event} = min(d_{scatter}, d_{boundary}, d_{census})$.
-				\subitem Move the particle a distance $d_{event}$, and reduce the particle weight according to Eq. \ref{Eq: new_E}.
-		     	\subitem If the particle energy is below a threshold, stop tracking it.
-				\subitem If $d_{event} = d_{scatter}$, the new direction is sampled from a cosine distribution and a contribution to the tally is found from Eq. \ref{Eq: tally_contr}.
-				\subitem If $d_{event} = d_{boundary}$, update the cell information to be the cell the particle is moving into.
-				\subitem If $d_{event} = d_{census}$, push the particle into a list containing all particles that `survived' the time step and stop tracking the particle.
-			\item At the end of the time step after all particles have been transported, calculate the energy of all the census particles and redistribute it randomly to a smaller number of representative particles.
-			\item Additionally, the temperature $T$ of each cell is updated at the end of each timestep according to Eq. \ref{Eq: cell_T}.
-			\item Update the time step information, and repeat the above scheme for all time steps.
-		\end{enumerate}
-
-		 \textcolor{red}{Reformat the above to read more fluidly. Add section that discusses what happens when there is no response function for the cell.}
+  		The forward transport problem follows closely to a typical IMC scheme. Each particle is sourced in a cell and is trasported over the duration of the timestep. Upon creation, a contribution is added to the tally using Eq. \ref{Eq: tally_contr}. 
+  		
+  		For each particle, while it remains in the problem domain and the timestep, a distance to the next scattering event is caluclated:
+  		\begin{equation}
+  			d_{scatter} = -\log{\frac{\xi}{(1 - f)(\sigma_{a} + \sigma_{s})}}
+  		\end{equation}
+  		where $\xi \in [0,1]$ is a uniformly distributed random number. Additionally, the distance to the cell boundary, $d_{boundary}$, distance to the tally surface, $d_{tally}$, and the distance to reach the end of the timestep, $d_{census}$ are calculated. It should be noted that we are interested only in escaping flux, so $d_{tally}$ is the distance to the surface of the tally where the particle would exit through. If the particle will not pass through the tally based on its current direction, $d_{tally}$ is set to be $\approx \infty$ to machine limits, such that the contribution from Eq. \ref{Eq: tally_contr} approaches $0$. The distance to the end of the timestep, $d_{census}$, is also determined. The distance to the next `event' is then calculated by:
+  		\begin{equation}
+  			d_{event} = min(d_{scatter}, d_{boundary}, d_{census})
+  		\end{equation}
+  		as the smallest distance is the most likely event to occur first. The particle is then moved a distance $d_{event}$ and its weight reduced accd. to Eq. \ref{Eq: new_E}. 
+  		
+  		At this point, if the particles weight is below a set fraction, then it is determined to have an inconsequental effect on the simulation and is no longer tracked. If the event was determined to be a scatter ($d_{event} \equiv d_{scatter}$), then a new direction is sampled from a cosine-distribution and a contribution is added to the tally using Eq. \ref{Eq: tally_contr}. Because a limited number of particles are traced in the inverse problem, it is possible that some cells will not have a $\sigma_{r}$ value. If this is the case, then more particles are traced trough the inverse problem. This is repeated as long as the cell has no contributions. 
+  		
+  		 If instead the event was passing across a cell boundary ($d_{event} \equiv d_{boundary}$), then the particle's current cell information is updated to the new cell. Lastly, if the event is the particle reaching the end of the timestep ($d_{event} = d_{census}$), then the particle is put into a list of all particles that `survived' the timestep to resume transport in the next timestep. 
+  		
+  		To maintain an unbiased simulation, at the end of the timestep after all particles have been transported, the total initial energy of all the census particles are redistributed randomly to a smaller number of representative particles. This allows for additional particles to be trasported within each timestep. Additionally, the temperature $T$ of each cell is updated accd. to Eq. \ref{Eq: cell_T}. The timestep information is then updated and the above scheme is repeated for the entirety of the simulation. 
 
 \section{Test Problem}
 	To check the validity of the response function method, a point source problem was devised where the analytic flux was known. This problem consisted of a $0.1 \times 0.1 \times 0.1$~cm$^3$ cube at an initial $T_{e}$ and $T_{r}$ temperature of $1 \deg$~C, encased in a $1.0 \times 1.0 \times 1.0$~cm$^3$ cube at an initial $T_{e}$ and $T_{r}$ temperature of $0.01 \deg$~C. The entire problem was then surrounded by a vacuum to mitigate all escaping flux from returning to the problem domain. The heat capacity of the heated `source' and material was set to be high such that the re-emittance of photons would be small compared to the source. Similarly, the opacity of the heated cells was set to be high compared to the rest of the material. \textcolor{red}{Not sure if these statements are correct or true - please edit/remove if needed!} For the generation of the response function, $10,000$ particles were used to trace through the mesh and generate the $\sigma_{r}$ values for each cell. A spherical tally surface was centered at the origin of the heated cell with a radius of $1.0$~cm. 
@@ -392,6 +392,7 @@
 		\label{fig:cubanova_T_r}
 	\end{figure}
 
+	
 
 \section{Conclusions}
 
