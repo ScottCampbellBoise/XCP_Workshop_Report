@@ -440,14 +440,14 @@
 		\textcolor{red}{Not sure what to talk about for Figs. \ref{fig:cubanova_T_e} \& \ref{fig:cubanova_T_r} ... Any thoughts/suggestions? }
 
 	\subsection{Cubanova with Planar Tally} \label{Sec: plane_tally}		
-		A planar tally is investigated for use in the cubanova simulation as its inherent directionality, in theory, should generate a flux via the response function method that aligns more consistently with the regular tally method. For these simulations, an $YZ$ plane centered at $X = 1$ was used. Additionally, the plane was bonded by the problem region, as otherwise the response function method would contribute to the tally for particles outside the problem domain. 
+		A planar tally is investigated for use in the cubanova simulation as its inherent directionality, in theory, should generate a flux via the response function method that aligns more consistently with the regular tally method. For these simulations, an $YZ$ plane centered at $X = 2$ was used. Additionally, the plane was bonded by the problem region, as otherwise the response function method would contribute to the tally for particles outside the problem domain. 
 		
 		Due to the directionality of a plane, a slightly modified forward transport method was used: instead of increasing the number of particles in the inverse problem, a photon is simply `marked for response.' Then, a particle contributes to the tally at its birth, every subsequent scattering event, and if the photon is `marked for response.' After contribution, a particle is no longer `marked for response.' This method was implemented as particles are only traced in one general direction. Small corner cells would then require a significantly longer time to get a contribution, making it computationally inefficient.
 		
 		\begin{figure} [h!]
 			\centering
 			\includegraphics[height=3in]{Figures/plane_r_sig_a.png}
-			\caption{A plot of the response function values for the cubanova simulation using a $YZ$ planar tally centered at $X=1$. }
+			\caption{A plot of the response function values for the cubanova simulation using a $YZ$ planar tally centered at $X=2$. }
 			\label{fig:plane_r_sig_a}
 		\end{figure}
 		
@@ -467,9 +467,16 @@
 			\label{fig:plane_avg_flux}
 		\end{figure}
 		
-		The motivation for using a planar tally is in approximating the problem flux with a lower variance than a regular tally method. Figure \ref{fig:plane_response_var} shows that the variance of the planar tally method is statistically equivalent to that of the regular tally. In other words, there is no improvement in the flux calculation for using the planar tally. Additionally, Fig. \ref{fig:plane_avg_flux} shows the planar tally underestimates the flux relative to the standard method. Taking this into consideration, for our cubanova simulation, there is no benifit to using the response method. 
+		The motivation for using a planar tally is in approximating the problem flux with a lower variance than a regular tally method. Figure \ref{fig:plane_response_var} shows that the variance of the planar tally method is significantly lower than that of the regular tally ($43.9\%$).  Additionally, Fig. \ref{fig:plane_avg_flux} shows the planar tally flux approximation is statistically equivalent ($<1\%$ difference on average) to that of the appoximate analytic solution obtained by the regular tally with a significantly greater number of forward particles. 
 		
-		However, despite the results for this particular problem, it should be noted that the planar tally recieves contributions on average four orders of magnitude more particles than the regular tally. We would expect that for a problem with higher opacities, a more complex problem geometry, and/or limited particle histories, the planar tally would become of more use with lower variances from the significantly greater particle contributions. 
+		\begin{figure} [h!]
+			\centering
+			\includegraphics[height=3in]{Figures/plane_avg_x=0_5.png}
+			\caption{A graph showing the calculated flux values for the regular tally and the $YZ$ plane tally centered at $X=0.5$ methods. }
+			\label{fig:plane_avg_x=0.5.png}
+		\end{figure}
+		
+		It should also be noted that the planar tally recieves approximately four orders of magnitude more particles than the regular tally. For these problems with higher opacities, a more complex problem geometry, and/or limited particle histories, the planar tally becomes of more use. However, as shown if Fig. \ref{fig:plane_avg_x=0.5.png}, in cases with large particle histories and small distances tally, the variance of the response method is statistically equivalent to the regular tally methods. In such cases where this was tested, it was shown that the response function method could significantly underestimate the `true' flux.
 
 		\begin{figure} [h!]
 			\centering
@@ -478,7 +485,7 @@
 			\label{fig:relative_errors}
 		\end{figure}
 	
-		These expectations are partially validated by Fig. \ref{fig:relative_errors} which shows the relative errors of the average flux calculations for planar and spherical respone function geometries to the regular tally. The general trend clearly indicates that for the cubanova problem, the planar tally consistently produces values closer to the approximate analytic (regular tally method with a significantly greater number of forward particles) than the spherical tally method produces.
+		These expectations are further validated by Fig. \ref{fig:relative_errors} which shows the relative errors of the average flux calculations for planar and spherical respone function geometries to the regular tally. The general trend clearly indicates that for the cubanova problem, the planar tally consistently produces values closer to the approximate analytic (regular tally method with a significantly greater number of forward particles) than the spherical tally method produces. This also indicates a strong connection bewtween problem and tally geometry with the variance and accuracy of the results obtained. 
 
 \section{Conclusions and Future Work}
 Our investigation into the use of a response function-based variance reduction method for use in simulations modeling supernova interactions with its circumstellar medium has shown a notable improvement in variance over standard methods in simple cases. 
