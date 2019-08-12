@@ -1,0 +1,65 @@
+\chapter{Variance Reduction at Scale: Improving IMC Methods for Thermal Transport Problems}
+
+% Use the \AuthorBlock command to add the author and mentor names.
+\AuthorBlock{Scott E. Campbell}{Mathew Cleveland, Kendra Long, and Ryan Wollaeger}
+
+\begin{chapabstract}
+The Thermal Radiative Transfer (TRT) equations describe the coupling between thermal radiation and material, which is an important physical process in many problems of interest to the astrophysics community. The Implicit Monte Carlo (IMC) method, originally developed over 40 years ago~\cite{FC71}, is a standard solution methodology for the TRT equations. In this research, an improvement for IMC techniques for analyzing the interactions between a supernova and its circumstellar material is discussed, tested, and analyzed for a simplified geometry. This improvement uses a response function based variance reduction method to better estimate the observed time-dependent signal from a supernova system. The response function method improves the convergence, reliability, and accuracy of the IMC simulations. We were able to demonstrate said improvements by implementing this method in the open-source branson IMC code developed by Alex Long (\textit{along@lanl.gov}) using modern object-oriented languages.
+\end{chapabstracm}
+
+\section{Introduction}
+        Some ideas to add here:
+        \begin{itemize}
+            \item What is the supernova problem? Why is it difficult to obtain good tallies for supernova problems using IMC?
+            \item Why is it important to improve efficiency for supernova simulations? (e.g. problem scale is large in space and time, so very computationally expensive... multiple physics involved that need to be modeled, etc.)
+            \item (Very briefly) What are some of the basic variance reduction methods that people have used to try to improve efficiency for Monte Carlo? Mention weight windows / modified sampling -- then mention that you will describe them in more detail later
+        \end{itemize}
+
+         \textcolor{red}{RYAN: Here are two paragraphs for the first two points above (feel free to modify).}
+         Electromagnetic (EM) transients are the main observational probe of supernovae, providing insight into the explosion energy, dynamics, and compositions of the exploding stars. These transients are formed by the complex interaction of photons with matter expanding at high velocity, and with a circumstellar medium (CSM) that existed before the supernova. Modeling supernovae with CSM interactions in multiple dimensions and extracting numerical transients is a challenging computational problem, requiring high spatial resolution in areas, relative to the overall distance between the star and CSM~\cite{MS10,MB13}. For the radiative transfer, in 1D deterministic~\cite{MB13} and Monte Carlo~\cite{KW09} have been applied to synthesize light curves and spectra.
+
+         However, to our knowledge, for 2D and 3D only simplified treatments of the radiation have been employed: parameterized radiative cooling~\cite{MS10,MK12}, the M1 moment closure approximation~\cite{VL16}, or no treatment (only hydrodynamics)~\cite{MP18}. Nevertheless, a spherical (or multidimensional) geometry can significantly impact the properties of the EM transient (spectra, light curves)~\cite{VL16,MP18}, and the effect of higher-order radiative transfer on the observables may be non-negligible.
+
+         Monte Carlo lends itself well to multiple dimensions since the sourcing of particles in space can be adjusted to mitigate transport in low-energy regions.
+
+        In a simulation of a multidimensional supernova interacting with a CSM, obtaining well-sampled multi-frequency, multi-observer-angle spectra may generally be prohibitively expensive with Monte Carlo, assuming escaping particles are directly tallied as part of the transient. For instance, assuming a modest $100^3$ cell 3D simulation, 10 observational views, and 100 observational wavelength bands, and further assuming 1\% of particles from each cell are tallied as escaping flux, the potential number of particles required to obtain 1 tally in each point in the observational phase space would be $\sim 100^3 \times 10 \times 100 \times 100 = 10^{11}$ particles.
+
+        Given the expense of simulating this number of particles, variance reduction that takes into account statistics at a tally surface (i.e. the ``telescope'') is worth exploring. Variance reduction methods are implemented to improve simulation efficiency while producing equivalent (unbiased) results. Such methods include implicit capture, splitting, Russian Roulette, and weight windows, which are described in more detail in Section~\ref{Sec: variance reduction}.
+
+        The remainder of this report outlines the background, motivation, and theory for the method, the algorithmic procedure, initial results, and an analysis of the cases and conditions where the method is useful.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\Bios{Joan S. Learner}{is an rising senior at the University of Southern North Dakota, with a double major in Forensic Pathology and Banjo.  She plans to attend graduate school Physics.}%
+{John P. Student}{received his B.S. in Welding from Apex Tech, and is currently a graduate student in the Philosophy department at University of Northern South Dakota.  He is interested in applications of Hegelian dialectics to nuclear power plant design.}
+
+%-----------------------------------------------------------
+% Each team's report has its own bibliography.  You must have these
+% two lines to add your team's bibliography.
+\bibliographystyle{plainnat}
+\bibliography{template/references}
