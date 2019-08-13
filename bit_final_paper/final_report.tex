@@ -1,0 +1,110 @@
+%-----------------------------------------------------------
+%  STUDENTS: Do not modify this file except with permission or in the
+%  specific sections noted below.
+%-----------------------------------------------------------
+
+\documentclass[12pt]{report}
+
+%-----------------------------------------------------------
+% STUDENTS: Uncomment the following command and list only your section
+% if you want to compile just your portion of the document.  This is
+% helpful to save time, and also if someone else's part is causing an
+% error.
+% BE CAREFUL not to commit changes to this line!
+%\includeonly{intro/intro}
+
+%-----------------------------------------------------------
+%  Packages which are part of the base report.
+\usepackage[sectionbib]{chapterbib}
+\usepackage{fancyhdr}
+\usepackage[top=1in, bottom=1.25in, left=1in, right=1in]{geometry}
+\usepackage{graphicx}
+\usepackage[round]{natbib}
+\usepackage{times}
+\usepackage{todonotes}
+
+% Customizations for the report
+\pagestyle{fancy}
+\lhead{}
+
+\newenvironment{chapabstract}{%
+    \begin{center}%
+      \bfseries Chapter Abstract
+    \end{center}}%
+
+\newcommand{\AuthorBlock}[2]{ \begin{center} 
+\emph{Team Members}\\
+#1 \\
+\hspace{1mm} \\
+\emph{Mentors}\\
+\vspace{1mm}
+#2
+\vspace{2mm}
+\end{center}}
+
+\newcommand{\Bios}[4]{
+\vspace{3em}
+\textit{\textbf{#1} #2}
+
+\vspace{1em}
+\textit{\textbf{#3} #4}}
+
+%-----------------------------------------------------------
+% STUDENTS: In this section, add any \usepackage commands you need for
+% your section.  Try to be judicious and not add more packages than
+% necessary or packages which are to fragile, so that your part plays
+% nicely with everyone else's.
+\usepackage{amsmath}
+\usepackage{subcaption}
+
+%-----------------------------------------------------------
+
+% This package is included last, so it is not overridden.
+\usepackage{hyperref}
+
+%-----------------------------------------------------------
+% The title page
+\title{Final Reports of the 2018 Los Alamos National Laboratory
+  Computational Physics Student Summer Workshop}
+\author{}
+\begin{document}
+
+%-----------------------------------------------------------
+%  The actual report contents
+%\maketitle
+
+\begin{titlepage}
+\makeatletter
+\centering 
+
+%\includegraphics[width=0.45\textwidth]{}
+%\includegraphics[trim={0 0 290 0},clip,width=0.45\textwidth]{}
+
+\vspace{1em}
+{\LARGE\bfseries\@title}
+\vspace{1em}
+
+%\includegraphics[width=0.9\textwidth]{}
+
+\vfill
+
+Workshop Coordinators: Daniel Israel, Garry Maskaly, and Heidi Morris
+
+LA-UR-20YY-XXXXX 
+\makeatother
+\end{titlepage}
+
+\tableofcontents
+\listoftodos
+
+%-----------------------------------------------------------
+%  The overall introduction from the Workshop coordinators.
+\include{intro/intro}
+
+%-----------------------------------------------------------
+%  STUDENTS: Add includes sections for each team here.  For example,
+%  if your team creates a subdirectory "NobelPrize" and the main file
+%  containing your contribution is "research.tex", then add a line:
+%  \include{NobelPrize/research}
+\include{VarReduction/main}
+\end{document}
