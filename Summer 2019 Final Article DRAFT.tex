@@ -281,8 +281,7 @@ Next event surface crossing estimators (NXTEVT) are an existing method for impro
 	  	Figure \ref{fig:resp_funct_visual} is a visual representation of this process. 
   	
   		
-  		An additional angular dependency was added to the response function method and implemented for this particular problem. The response function was seperated into six directions for each cell: x-positive, x-negative, y-positive, y-negative, z-positive, and z-negative. This is thought to have an appreciable impact on the calculated flux as the averaged $\sigma_{r}$ can be unrepresentative of the true contribution based on particle directionality. For example, particles in cells close to our spherical tally will travel a distance closest to the tally, or to the other side of the tally: a potentially significant 
-  		distance. \\ 
+  		An additional angular dependency was added to the response function method and implemented for this particular problem. The response function was seperated into six directions for each cell: x-positive, x-negative, y-positive, y-negative, z-positive, and z-negative. This is thought to have an appreciable impact on the calculated flux as the averaged $\sigma_{r}$ can be unrepresentative of the true contribution based on particle directionality. For example, particles in cells close to our spherical tally will travel a distance closest to the tally, or to the other side of the tally: a potentially significant distance. \\
   				
   		For the angular dependent calculation of $\sigma_{r}$, a similar process as above is followed, however, each directionality is accounted for:
   		\begin{equation}
@@ -487,12 +486,12 @@ Our investigation into the use of a response function-based variance reduction m
 
 The lack of directionality in the response function likely causes the method to under-predict the flux for a spherical tally. The planar tally implementation did demonstrate a closer approximation to the regular tally method, albeit with no improvement of the variance. We do expect that the method will preform better for tally geometries that reflect the geometry of the problem.
 
-Future work will include looking at improving the directionality of the response function for different problem and tally geometries. It would be very useful to perform a response mesh resolution study in angle and energy to determine when the response tally result ``converges'' to the regular tally. Optimization of the response function generation method could also be performed.
+Future work will include looking at improving the directionality of the response function for different problem and tally geometries. It would be very useful to perform a response mesh resolution study in angle and energy to determine when the response tally result ``converges'' to the regular tally. Optimization of the response function generation method could also be performed. Additionally, running our response function with a more realistic supernova-CSM simulation to determine if our method converges accordingly is of interest as well.
 
 \newpage
 
-\bibliographystyle{plainnat}
-\bibliography{references}
+%\bibliographystyle{plainnat}
+%\bibliography{references}
 
 
 \begin{thebibliography}{99}
