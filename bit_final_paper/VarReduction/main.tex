@@ -1,23 +1,11 @@
 \chapter{Variance Reduction at Scale: Improving IMC Methods for Thermal Transport Problems}
 
-\usepackage{amsmath}  % needed for \tfrac, \bmatrix, etc.
-\usepackage{amsfonts} % needed for bold Greek, Fraktur, and blackboard bold
-\usepackage{graphicx} % needed for figures
-\usepackage{setspace}
-\usepackage{times}
-\usepackage{relsize}
-\usepackage{framed}
-\usepackage{float}
-\usepackage{subfig}
-\usepackage{color}
-\usepackage{booktabs}
-
 % Use the \AuthorBlock command to add the author and mentor names.
 \AuthorBlock{Scott E. Campbell}{Mathew Cleveland, Kendra Long, and Ryan Wollaeger}
 
 \begin{chapabstract}
 The Thermal Radiative Transfer (TRT) equations describe the coupling between thermal radiation and material, which is an important physical process in many problems of interest to the astrophysics community. The Implicit Monte Carlo (IMC) method, originally developed over 40 years ago~\cite{FC71}, is a standard solution methodology for the TRT equations. In this research, an improvement for IMC techniques for analyzing the interactions between a supernova and its circumstellar material is discussed, tested, and analyzed for a simplified geometry. This improvement uses a response function based variance reduction method to better estimate the observed time-dependent signal from a supernova system. The response function method improves the convergence, reliability, and accuracy of the IMC simulations. We were able to demonstrate said improvements by implementing this method in the open-source branson IMC code developed by Alex Long (\textit{along@lanl.gov}) using modern object-oriented languages.
-\end{chapabstracm}
+\end{chapabstract}
 
 
 \section{Introduction}
@@ -89,7 +77,7 @@ Next event surface crossing estimators (NXTEVT) are a standard method for analyz
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/nxtevt_visual.png}
+	\includegraphics[height=3in]{VarReduction/plots/nxtevt_visual.png}
 	\caption{A visual demonstrating why splitting is ineffective in optically thin regions: the split particles will all have generally the same direction and will stream with few collisions.}
 	\label{fig:nxtevt_visual}
 \end{figure}
@@ -261,7 +249,7 @@ where $\phi$ is from Eq. \ref{Eq:pos_phi}, $\cos{\theta}$ is from Eq. \ref{Eq:po
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/resp_funct_pt_src_vis.png}
+	\includegraphics[height=3in]{VarReduction/plots/resp_funct_pt_src_vis.png}
 	\caption{A simplified visualization of the response function method. Particles are traced from the surface of the tally (blue ring) ‘towards’ the source (purple square) until they exit the mesh. As the particle moves, an adjusted opacity, $\sigma_{r}$, is calculated based on how far the particle has traveled from its origin on the tally surface, as well as the $\sigma_{a,~cell}$ values of the cells that it has passed through. A darker shade of red corresponds to a higher $\sigma_{r}$ value – a less likely chance that a particle will ‘make it’ to the tally. These values are then used to calculate an effective contribution to the tally based on the cell the particle being transported is in.}
 	\label{fig:resp_funct_visual}
 \end{figure}
@@ -348,7 +336,7 @@ The validity of our method was tested using measures of average flux and varianc
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/point_src_errors.png}
+	\includegraphics[height=3in]{VarReduction/plots/point_src_errors.png}
 	\caption{A graph showing the average values of the flux for a point source problem as well as the variance as a function of the number of particles used in the simulation. This shows that our method has far less variance for fewer simulated particles, which implies that it is a more reliable method under these conditions. Datapoint 2 for the response function results appears to be an anomaly – likely resulting from statistics or a minor bug in our code.}
 	\label{fig:point_source_errors}
 \end{figure}
@@ -361,7 +349,7 @@ where $a$ is the radiation constant, $c$ is the speed of light, $T$ is the initi
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/point_src_fom.png}
+	\includegraphics[height=3in]{VarReduction/plots/point_src_fom.png}
 	\caption{A graph showing the figure of merits (FoM) of the regular tally method as well as the response function. A higher FoM corresponds to a method that provides less variance in a more efficient period of time. This figure shows that after approx. 50k particles, our method results in a greatly improved FoM compared to a regular tally. This provides a strong basis for the usefulness of our method.}
 	\label{fig:point_source_FoM}
 \end{figure}
@@ -374,7 +362,7 @@ where $\sigma^{2}(x)$ is the variance of the method and $t_{run}$ is the time to
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/point_src_contr.png}
+	\includegraphics[height=3in]{VarReduction/plots/point_src_contr.png}
 	\caption{A graph showing the number of particles (or times in the case of the response function) that contribute to the tally. In general, a method will be expected to have a smaller variance with a greater number of particles that contribute to the tally. }
 	\label{fig:point_src_num_contr}
 \end{figure}
@@ -390,7 +378,7 @@ For these simulations, a spherical tally surface was centered in the problem dom
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/cubanova_op_a.png}
+	\includegraphics[height=3in]{VarReduction/plots/cubanova_op_a.png}
 	\caption{A plot of the geometrically simplified supernova problem showing the true $\sigma_{a}$ value of the problem (left-hand side) as well as the $\sigma_{r}$ values generated by the response function method (right-hand side).}
 	\label{fig:cubanova_op_a}
 \end{figure}
@@ -401,7 +389,7 @@ From a visual standpoint, the response values match expectations. The voids outs
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/cubanova_flux_var.png}
+	\includegraphics[height=3in]{VarReduction/plots/cubanova_flux_var.png}
 	\caption{A graph demonstrating the variance of the regular tally, and response function tally, and an angle dependent response tally for the simplified supernova simulation from Fig. \ref{fig:cubanova_op_a} as a function of the simulation time.}
 	\label{fig:cubanova_flux_var}
 \end{figure}
@@ -410,7 +398,7 @@ Since the flux of the cubanova problem is time-dependent, i.e. no analytic flux,
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/cubanova_avg_error.png}
+	\includegraphics[height=3in]{VarReduction/plots/cubanova_avg_error.png}
 	\caption{The relative flux calculations made by the regular tally method and the response function tally method. As in Fig. \ref{fig:point_source_errors}, the response method has a smaller variance, however, it also drastically underestimates the flux. This likely stems from the use of a spherical tally surface instead of a directional tally surface for this particular problem.}
 	\label{fig:cubanova_avg_error}
 \end{figure}
@@ -419,14 +407,14 @@ Figure \ref{fig:cubanova_avg_error} illustrates the average flux and standard de
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/cubanova_T_e.png}
+	\includegraphics[height=3in]{VarReduction/plots/cubanova_T_e.png}
 	\caption{A plot of the electron temperature at the end of the simulations shown in Figs. \ref{fig:cubanova_op_a}, \ref{fig:cubanova_flux_var}, \ref{fig:cubanova_avg_error}. The overheating likely results from the small corner cells.}
 	\label{fig:cubanova_T_e}
 \end{figure}
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/cubanova_T_r.png}
+	\includegraphics[height=3in]{VarReduction/plots/cubanova_T_r.png}
 	\caption{A plot of the radiation temperature from the plot in Fig. \ref{fig:cubanova_T_e}. The noise in the radiation field results from a limited number of photons, the optical thickness of the material, and the coarse mesh granularity of the void region.}
 	\label{fig:cubanova_T_r}
 \end{figure}
@@ -440,7 +428,7 @@ Due to the directionality of a plane, a slightly modified forward transport meth
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/plane_r_sig_a.png}
+	\includegraphics[height=3in]{VarReduction/plots/plane_r_sig_a.png}
 	\caption{A plot of the response function values for the cubanova simulation using a $YZ$ planar tally centered at $X=2$. }
 	\label{fig:plane_r_sig_a}
 \end{figure}
@@ -449,14 +437,14 @@ The response function values using the planar tally are shown in Fig. \ref{fig:p
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/plane_response_var.png}
+	\includegraphics[height=3in]{VarReduction/plots/plane_response_var.png}
 	\caption{A graph showing the relative variance of the regular and response function methods using a planar tally along the yz-axis at the edge of the positive x-axis.}
 	\label{fig:plane_response_var}
 \end{figure}
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/plane_avg_error.png}
+	\includegraphics[height=3in]{VarReduction/plots/plane_avg_error.png}
 	\caption{A graph showing the calculated flux of the planar response function compared to the standard tally method with the standard deviation of the flux values shown. }
 	\label{fig:plane_avg_flux}
 \end{figure}
@@ -465,7 +453,7 @@ The motivation for using a planar tally is in approximating the problem flux wit
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/plane_avg_x=0_5.png}
+	\includegraphics[height=3in]{VarReduction/plots/plane_avg_x=0_5.png}
 	\caption{A graph showing the calculated flux values for the regular tally and the $YZ$ plane tally centered at $X=0.5$ methods. }
 	\label{fig:plane_avg_x=0.5.png}
 \end{figure}
@@ -474,7 +462,7 @@ It should also be noted that the planar tally recieves approximately four orders
 
 \begin{figure} [h!]
 	\centering
-	\includegraphics[height=3in]{plots/relative_errors.png}
+	\includegraphics[height=3in]{VarReduction/plots/relative_errors.png}
 	\caption{A graph the relative errors of the response function tallies, a spherical geometry and a planar geometry, for the cubanova simulation. }
 	\label{fig:relative_errors}
 \end{figure}
@@ -493,11 +481,9 @@ Future work will be looking at improving the directionality of the response func
 
 
 
-\Bios{Joan S. Learner}{is an rising senior at the University of Southern North Dakota, with a double major in Forensic Pathology and Banjo.  She plans to attend graduate school Physics.}%
-{John P. Student}{received his B.S. in Welding from Apex Tech, and is currently a graduate student in the Philosophy department at University of Northern South Dakota.  He is interested in applications of Hegelian dialectics to nuclear power plant design.}
-
+\Bios{Scott E. Campbell}{is an rising junior at Gonzaga University in Spokane, Washington, with a double major in Physics and Math-Computer Science.}
 %-----------------------------------------------------------
 % Each team's report has its own bibliography.  You must have these
 % two lines to add your team's bibliography.
 \bibliographystyle{plainnat}
-\bibliography{template/references}
+\bibliography{VarReduction/references}
