@@ -1,0 +1,83 @@
+\begin{thebibliography}{13}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[A.\~Vlasis(2016)]{VL16}
+E.\~Audit A.\~Vlasis, L.\~Dessart.
+\newblock Two-dimensional radiation hydrodynamics simulations of superluminous
+  interacting supernovae of type iin.
+\newblock \emph{MNRAS}, 2016.
+
+\bibitem[A.J.\~van Marle(2012)]{MK12}
+R.\~Keppens A.J.\~van Marle.
+\newblock Multi-dimensional models of circumstellar shells around evolved
+  massive stars.
+\newblock \emph{A \& A}, 2012.
+
+\bibitem[A.J.\~van Marle(2010)]{MS10}
+S.P\ Owocki B. van~Veelen A.J.\~van Marle, N.\~Smith.
+\newblock Numerical models of collisions between core-collapse supernovae and
+  circumstellar shells.
+\newblock \emph{MNRAS}, 2010.
+
+\bibitem[A.T.\~McDowell(2018)]{MP18}
+D.\~Kasen A.T.\~McDowell, P.C.\~Duffel.
+\newblock Interaction of a supernova with a circumstellar disk.
+\newblock \emph{ApJ}, 2018.
+
+\bibitem[D.\~Kasen(2009)]{KW09}
+S.E.\~Woosley D.\~Kasen.
+\newblock Type ii supernovae: model light curves and standard candle
+  relationships.
+\newblock \emph{ApJ}, 2009.
+
+\bibitem[Dailey(2011)]{WD11}
+W.T. Dailey.
+\newblock \emph{Ray next-event estimator transport of primary and secondary
+  gamma rays}.
+\newblock PhD thesis, Air Force Institute of Technology, 2011.
+
+\bibitem[E.E.~Lewis()]{LM93}
+Jr. E.E.~Lewis, W.F.~Lewis\.
+\newblock \emph{Computational Methods of Neutron Transport}, pages 309--339.
+\newblock American Nuclear Society.
+
+\bibitem[J.A.\~Fleck\(1971)]{FC71}
+J.D.\ Cummings\~Jr. J.A.\~Fleck\, Jr.\.
+\newblock An implicit monte carlo scheme for calculating time and frequency
+  dependent nonlinear radiation transport.
+\newblock \emph{J.\ Comp.\ Phys.}, 1971.
+
+\bibitem[Landman(2016)]{JL16}
+J.T. Landman.
+\newblock \emph{Variance reduction strategies for implicit Monte Carlo
+  simulations}.
+\newblock PhD thesis, Texas A\&M University, 2016.
+
+\bibitem[Lucy(1999)]{LL05}
+L.B. Lucy.
+\newblock Improved monte carlo techniques for the spectral synthesis of
+  supernovae.
+\newblock \emph{A\&A}, 1999.
+
+\bibitem[M.~Kawai(1986)]{KH86}
+Y.~Hayashida M.~Kawai.
+\newblock Development of general next event surface crossing estimators for
+  monte carlo method.
+\newblock \emph{J.\ Nuc.\ Sci.\ \& Tech.}, 1986.
+
+\bibitem[T.E.~Booth(2012)]{BF12}
+R.L.~Martz T.E.~Booth, R. Arthur~Forster.
+\newblock Mcnp variance reduction developments in the 21st century.
+\newblock \emph{Nuclear Technology}, 2012.
+
+\bibitem[T.J.\~Moriya(2013)]{MB13}
+N.\ Tominaga et~al. T.J.\~Moriya, S.I.\~Blinnikov.
+\newblock Light-curve modelling of superluminous supernova 2006gy: collision
+  between supernova ejecta and a dense circumstellar medium.
+\newblock \emph{MNRAS}, 2013.
+
+\end{thebibliography}
