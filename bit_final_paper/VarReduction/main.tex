@@ -1,10 +1,10 @@
-\chapter{Variance Reduction for Improving IMC Simulations of Astrophysical Events}
+\chapter{Variance Reduction for IMC Simulations of Astrophysical Events}
 
 % Use the \AuthorBlock command to add the author and mentor names.
 \AuthorBlock{Scott E. Campbell}{Mathew Cleveland, Kendra Long, and Ryan Wollaeger}
 
 \begin{chapabstract}
-	The Thermal Radiative Transfer (TRT) equations describe the coupling between thermal radiation and material, which is an important physical process in many problems of interest to the astrophysics community. The Implicit Monte Carlo (IMC) method, originally developed over 40 years ago~\cite{FC71}, is a standard solution methodology for the TRT equations. In this research, an improvement for IMC techniques for analyzing the interactions between a supernova and its circumstellar material is discussed, tested, and analyzed for a simplified geometry. This improvement uses a response function based variance reduction method to better estimate the observed time-dependent signal from a supernova system. The response function method improves the convergence, reliability, and accuracy of the IMC simulations. We were able to demonstrate said improvements by implementing this method in the open-source branson IMC code developed by Alex Long (\textit{along@lanl.gov}) using modern object-oriented languages.
+	The Thermal Radiative Transfer (TRT) equations describe the coupling between thermal radiation and material, which is an important physical process in many problems of interest to the astrophysics community. The Implicit Monte Carlo (IMC) method, originally developed over 40 years ago~\cite{FC71}, is a standard solution methodology for the TRT equations. In this research, an improvement for IMC techniques for analyzing the interactions between a supernova and its circumstellar material is discussed, tested, and analyzed for a simplified geometry. This improvement uses a response function based variance reduction method to better estimate the observed time-dependent signal from a supernova system. The response function method improves the convergence, reliability, and accuracy of flux calcutions for different tally surfaces in IMC simulations. We were able to demonstrate said improvements by implementing this method in the open-source branson IMC code developed by Alex Long (\textit{along@lanl.gov}) using modern object-oriented languages.
 \end{chapabstract}
 
 \section{Introduction}
@@ -12,7 +12,7 @@ Electromagnetic (EM) transients are the main observational probe of supernovae, 
 
 However, to our knowledge, for 2D and 3D only simplified treatments of the radiation have been employed: parameterized radiative cooling~\cite{MS10,MK12}, the M1 moment closure approximation~\cite{VL16}, or no treatment (only hydrodynamics)~\cite{MP18}. Nevertheless, a spherical (or multidimensional) geometry can significantly impact the properties of the EM transient (spectra, light curves)~\cite{VL16,MP18}, and the effect of higher-order radiative transfer on the observables may be non-negligible.
 
-Monte Carlo lends itself well to multiple dimensions since the sourcing of particles in space can be adjusted to mitigate transport in low-energy regions.
+Monte Carlo lends itself well to multiple dimensions since the sourcing of particles in space can be adjusted to mitigate transport in low-energy regions to efficiently resolve regions of phase space that are important to the observable quantities.
 
 In a simulation of a multidimensional supernova interacting with a CSM, obtaining well-sampled multi-frequency, multi-observer-angle spectra may generally be prohibitively expensive with Monte Carlo, assuming escaping particles are directly tallied as part of the transient. For instance, assuming a modest $100^3$ cell 3D simulation, 10 observational views, and 100 observational wavelength bands, and further assuming 1\% of particles from each cell are tallied as escaping flux, the potential number of particles required to obtain 1 tally in each point in the observational phase space would be $\sim 100^3 \times 10 \times 100 \times 100 = 10^{11}$ particles.
 
@@ -22,7 +22,7 @@ The remainder of this report outlines the background, motivation, and theory for
 
 \section{Background and Theory}
 \subsection{Thermal Radiation Transport}
-The scattering and absorption of a photon emitted from a material is described by the TRT equations:
+The absorption of a photon emitted from a material is described by the TRT equations:
 \begin{equation} \label{Eq: TRT_1}
 \frac{1}{c} \frac{\partial I}{\partial t}(\vec{r}, \vec{\Omega}, \nu, t) + \vec{\Omega} \frac{\partial I}{\partial \vec{r}}(\vec{r}, \vec{\Omega}, \nu, t) + \sigma_{a}(\vec{r}, \nu, T)I(\vec{r}, \vec{\Omega}, \nu, t) = 2 \pi \sigma_{a}(\vec{r}, \nu, T)B(\nu, T) + \frac{Q}{2}(\vec{r}, \nu, t),
 \end{equation}
@@ -40,14 +40,14 @@ f = \frac{1}{1 + \frac{4acT^{3}\sigma \Delta t}{c_{v}}}
 \end{equation}
 where $a$ is the radiation constant, $c$ is the speed of light, $T$ is the material temperature, $\sigma$ is the material opacity, $\Delta t$ is the time step, and $c_{v}$ is the material's specific heat.
 
-The IMC method applies two note-worthy approximations: semi-implicit discretization of time, and the linearization of the TRT equations. By linearizing the TRT equations, IMC is known to lead to inaccurate or non-physical results. Additionally, the time discretization is not fully implicit as implied, but rather semi-implicit as it is typically too expensive to converge otherwise.
+The IMC method uses a semi-implicit time discretization of the emission term to linearize the system of equations. By linearizing the TRT equations, IMC takes on a maximum principle stability limit, that if violated, can result in unphysical behavior. Additionally, the time discretization is not fully implicit as implied, but rather semi-implicit as it is typically too expensive to converge otherwise.
 
 In the \textit{branson} IMC code used for this research, the spatial domain is discretized into rectangular regions referred to as cells, each with a constant material temperature, radiation temperature, and density per timestep. Particles are tracked as they move through the cells and can be absorbed into the material, scattered, or stream out of the spatial domain. A particle is transported until it reaches the end of the time step or is fully absorbed by the material. Information about the system (e.g. fluence) is accumulated during the timestep and stored in a `tally'.
 
 \subsection{Variance Reduction for IMC} \label{Sec: variance reduction}
 Since the IMC method is stochastic, there will always be some statistical error in the result. Inherent issues with IMC methods include slow convergence and large computational requirements~\cite{AW16}. Furthermore, in cases where a material is optically thick and the distance from source to observation point (i.e. a tally surface) is large enough, the analog IMC method will fully absorb most particles into the material before they reach the tally, leaving the tally poorly sampled.
 
-Due to these issues, variance reduction methods for IMC methods are necessary to provide equivalent answers while using fewer resources and converging faster. There are a large variety of variance reduction methods suited to different purposes. Common examples include implicit capture coupled with history termination, splitting and Russian Roulette, exponential transformation, forced collisions, source biasing, correlated sampling, optical reciprocity, and weight windows~\cite{JL16}.
+Due to these issues, variance reduction methods for IMC are necessary to provide equivalent answers while using fewer resources and converging faster. There are a large variety of variance reduction methods suited to different purposes. Common examples include implicit capture coupled with history termination, splitting and Russian Roulette, exponential transformation, forced collisions, source biasing, correlated sampling, optical reciprocity, and weight windows~\cite{JL16}.
 
 Implicit capture, or absorption supression, is a classic variance reduction technique that adjusts a particle's weight at every collision event according to the following relationship:
 \begin{equation}
@@ -83,7 +83,7 @@ This method points particles towards the region of interest to increase the samp
 \end{equation}
 where $\mu$ is the angle between $\vec{\Omega}$ and the surface normal at $\vec{r^{\prime}}$, and $\Sigma_{t}$ is the total cross-section in the material. 
 
-For materials with high opacities and long distances from source to tally, the NXTEVT method produces unphysical answers with increased variance relative to standard methods~\cite{KH86}. We are principally concerned in situations where such conditions exist, i.e. applications in astrophysical events, and therefore chose to investigate new methods. 
+TRT has orders of magnitude more collisions and are typically solved on meshes rather than common editorial geometry. This makes the NXTEVT estimator very expensive. Because of these limitations, we chose to investigate a new method that adresses these issues. 
 
 \subsection{Response Function Theory}
 A response function can be an effective variance reduction method for tally surfaces because it contributes an adjusted energy value to the tally at every scatter event, rather than adding a contribution only once the particle passes through the tally surface. Because of this feature, the tally surface should be well-sampled using the response function compared to standard variance reduction methods. 
@@ -100,7 +100,7 @@ where $E_{particle}$ is the current energy of the particle, $\Delta t$ is the cu
 \subsection{Supernova and CSM Parameters} \label{sec:sncsmpars}
 We attempt to model a snapshot of a supernova interacting with a circumstellar medium (CSM). The CSM has high enough mass to theoretically produce a superluminous supernova (e.g. SN 2006gy). The time for the snapshot is chosen to be after the supernova ejecta hits the CSM and produces a shock. This shock ionizes the CSM, which increases the opacity and consequently the optical depth. Moreover, the increase in density from the shock, coincident with the ionized region, also contributes to an increase in the optical depth of the CSM.
 
-The approximate properties of each layer near the time of peak luminosity ($\sim70$ days) for model D2 of Moriya, Blinnikov, et al (2013) (hereafter M13) are as follows in Table~\ref{tab:supernova_params}.
+The approximate properties of each layer near the time of peak luminosity ($\sim70$ days) for model D2 of \cite{MB13} are as follows in Table~\ref{tab:supernova_params}.
 
 \begin{table}[h!]
 	\centering
@@ -322,7 +322,26 @@ If, instead, the selected event was a cell boundary crossing ($d_{event} \equiv 
 To maintain an unbiased simulation, at the end of the timestep after all particles have been transported, the total initial energy of all the census particles are redistributed randomly to a smaller number of representative particles. This allows for additional particles to be transported within each timestep. Additionally, the temperature $T$ of each cell is updated accd. to Eq. \ref{Eq: cell_T}. The timestep information is then updated and the above scheme is repeated for the entirety of the simulation. 
 
 \section{Test Problem}
-To check the validity of the response function method, a point source problem was devised where the analytic flux solution could be estimated. This problem consisted of a $0.1 \times 0.1 \times 0.1$~cm$^3$ cube at an initial $T_{e}$ and $T_{r}$ temperature of $1$~keV, encased in a $1.0 \times 1.0 \times 1.0$~cm$^3$ cube at an initial $T_{e}$ and $T_{r}$ temperature of $0.01$~keV. The entire problem was then surrounded by a vacuum to mitigate all escaping flux from returning to the problem domain. The heat capacity of the heated `source' and material was set to be high such that the re-emission of photons would be small compared to the source. In order to calculate the response function, $10,000$ particles were traced through the mesh to generate the $\sigma_{r}$ values for each cell. A spherical tally surface was centered at the origin of the heated cell with a radius of $1.0$~cm. 
+To check the validity of the response function method, a point source problem was devised where the analytic flux solution could be estimated. This problem consisted of a $0.1 \times 0.1 \times 0.1$~cm$^3$ `source' cube, encased in a $1.0 \times 1.0 \times 1.0$~cm$^3$ cube. The entire problem was then surrounded by a vacuum to mitigate all escaping flux from returning to the problem domain. The parameters of the test problem are shown in Table~\ref{tab:point_source_params}.
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{lcc}
+		\toprule
+		Parameter & Heated `Source' Cells & Surrounding Cells \\ 
+		\midrule
+		$\rho$ $(\frac{kg}{cm^{3}})$ & 1.0 & 1.0 \\ 
+		$c_{v}$ $(\frac{GJ}{keV \cdot kg})$ & 100 & 0.01 \\
+		$\sigma$ $(\frac{1}{cm})$ & 0.1 & 0.1 \\
+		$T_{e,~0}$ $(keV)$ & 1.0 & 0.01 \\ 
+		$T_{r,~0}$ $(keV)$ & 1.0 & 0.01 \\
+		\bottomrule
+	\end{tabular}
+	\caption{}
+	\label{tab:point_source_params}
+\end{table}
+
+ The heat capacity of the heated `source' and material was set to be high such that the re-emission of photons would be small compared to the source. In order to calculate the response function, $10,000$ particles were traced through the mesh to generate the $\sigma_{r}$ values for each cell. A spherical tally surface was centered at the origin of the heated cell with a radius of $1.0$~cm. 
 
 The validity of our method was tested using measures of average flux and variance as well as the figure of merit (FoM) of the method. These quantities were measured as a function of the number of particles run in the forward simulation. 
 
@@ -335,9 +354,9 @@ The validity of our method was tested using measures of average flux and varianc
 
 Results of the average flux and variance testing are shown in Fig. \ref{fig:point_source_errors}. The analytic flux for a point source problem is determined using the following equation:
 \begin{equation}
-Flux = \sigma_{a}  a  c T^{4} \Delta t V_{src}
+Flux = \frac{Q \exp{-\sigma_{a}}}{A_{tally}}
 \end{equation}
-where $a$ is the radiation constant, $c$ is the speed of light, $T$ is the initial temperature, $\Delta t$ is the time step duration, and $V_{src}$ is the source region volume. Because the point-source problem is effectively steady-state, average flux and variance were determined from the average over all of the time steps in the simulation. The general trend of this plot demonstrates that the response function produced values largely centered around the analytic flux with significantly lower variance. It should be noted, however, that the second data-point is anomalous: likely resulting from statistics or a minor bug in the code. 
+where $Q$ is the total source weight, $\sigma_{a}$ is the absorbtion opacity, and $A_{tally}$ is the surface area of the tally. Because the point-source problem is effectively steady-state, average flux and variance were determined from the average over all of the time steps in the simulation. The general trend of this plot demonstrates that the response function produced values largely centered around the analytic flux with significantly lower variance. It should be noted, however, that the second data-point is anomalous: likely resulting from statistics or a minor bug in the code. 
 
 \begin{figure} [h!]
 	\centering
@@ -366,7 +385,21 @@ This section presents the results of the response function method applied to a s
 
 \subsection{Cubanova with Spherical Tally}
 
-For these simulations, a spherical tally surface was centered in the problem domain, $(0,0,0)$, with a radius of $2$. 
+\begin{figure} [h!]
+	\centering
+	\includegraphics[height=3in]{VarReduction/plots/cubanova_T_e.png}
+	\caption{A plot of the electron temperature at the end of the simulations shown in Figs. \ref{fig:cubanova_op_a}, \ref{fig:cubanova_flux_var}, \ref{fig:cubanova_avg_error}. }
+	\label{fig:cubanova_T_e}
+\end{figure}
+
+\begin{figure} [h!]
+	\centering
+	\includegraphics[height=3in]{VarReduction/plots/cubanova_T_r.png}
+	\caption{A plot of the radiation temperature for the simulation in Fig. \ref{fig:cubanova_T_e}.}
+	\label{fig:cubanova_T_r}
+\end{figure}
+
+For these simulations, a spherical tally surface was centered in the problem domain, $(0,0,0)$, with a radius of $2$. The simulations where run at a coarse particle/time-step resolution which results in a significant amount of noise in the radiation and temperature field as shown in Figs. \ref{fig:cubanova_T_e} and \ref{fig:cubanova_T_r}. This plot demonstrates why the response function tally is possibly more efficient than the regular tally for this type of problem: it shows how poorly resolved the radiation solution is outside of the innermost material region.
 
 \begin{figure} [h!]
 	\centering
@@ -377,7 +410,7 @@ For these simulations, a spherical tally surface was centered in the problem dom
 
 Figure \ref{fig:cubanova_op_a} shows a comparison between the true $\sigma_{a}$ of the problem at time $t_{0}$ (left-hand side) as well as the generated response values, $\sigma_{r}$, (right-hand side) for each cell. The response value for each cell represents the average opacity between the cell and every possible tally location. 
 
-From a visual standpoint, the response values match expectations. The voids outside the tally region have the smallest $\sigma_{r}$, as the only way an outgoing particle in this region could contribute to the tally would be to backscatter and pass through to the other side of the tally. Similarly, the void regions inside the tally have the next highest $\sigma_{r}$ as it can either pass through the tally in the direction it is traveling in, or pass through a different point after scattering. Similar logic follows for the supernova and CSM regions. The smearing artifacts along the axis in the response values show a limitation of the direction-independent $\sigma_{r}$ calculation; we believe that disregarding the particle's directionality while it is traced through the mesh results in some cells receiving a smaller $\sigma_{r}$ value.
+From a visual standpoint, the response values match expectations. The smearing artifacts along the axis in the response values show a limitation of the direction-independent $\sigma_{r}$ calculation. This in general leads to an under-estimation of the flux in the forward transport problem. This can be slightly aleviated through a directional-dependent $\sigma_{r}$ calculation.
 
 \begin{figure} [h!]
 	\centering
@@ -396,22 +429,6 @@ Since the flux of the cubanova problem has detailed space- and time-dependence (
 \end{figure}
 
 Figure \ref{fig:cubanova_avg_error} illustrates the average flux and standard deviation from the simulations run in Fig. \ref{fig:cubanova_flux_var}. It is important to note that the response function produces an average flux significantly lower than the standard tally method which is thought to closely approximate the true flux. However, the angle-dependent method does approximate the solution more closely. We believe that this discrepancy is not in the fault of the method, but rather an artifact of the use of a spherical tally on which the response function is generated. Under this, we would expect that a planar tally surface will produce a flux that accurately represents the true value as it has its directionality built-in. Section \ref{Sec: plane_tally} discusses this and results of using a planar tally.
-
-\begin{figure} [h!]
-	\centering
-	\includegraphics[height=3in]{VarReduction/plots/cubanova_T_e.png}
-	\caption{A plot of the electron temperature at the end of the simulations shown in Figs. \ref{fig:cubanova_op_a}, \ref{fig:cubanova_flux_var}, \ref{fig:cubanova_avg_error}. }
-	\label{fig:cubanova_T_e}
-\end{figure}
-
-\begin{figure} [h!]
-	\centering
-	\includegraphics[height=3in]{VarReduction/plots/cubanova_T_r.png}
-	\caption{A plot of the radiation temperature for the simulation in Fig. \ref{fig:cubanova_T_e}.}
-	\label{fig:cubanova_T_r}
-\end{figure}
-
-Figure \ref{fig:cubanova_T_e} shows the end-of-simulation electron temperature for the cubanova simulation. A small amount of overheating is observed, which likely results from the small corner cells. Figure \ref{fig:cubanova_T_r} shows radiation temperature at end-of-simulation for the cubanova. The noise in the radiation field results from the limited number of photons simulated, the optical thickness of the material, and the coarse mesh granularity of the void region. This plot demonstrates why the response function tally is more efficient than the regular tally for this type of problem, as it shows how poorly resolved the radiation solution is outside of the innermost material region.
 
 \subsection{Cubanova with Planar Tally} \label{Sec: plane_tally}		
 A planar tally is investigated for use in the cubanova simulation as its inherent directionality, in theory, should generate a flux via the response function method that aligns more consistently with the regular tally method. For these simulations, a $YZ$ plane centered at $X = 2$ was used. Additionally, the plane was bounded by the problem region, as otherwise the response function method would contribute to the tally for particles outside the problem domain. 
@@ -443,14 +460,7 @@ The response function values using the planar tally are shown in Fig. \ref{fig:p
 
 The motivation for using a planar tally is in approximating the problem flux with a lower variance than a regular tally method. Figure \ref{fig:plane_response_var} shows that the variance of the planar tally method is significantly lower than that of the regular tally ($43.9\%$).  Additionally, Fig. \ref{fig:plane_avg_flux} shows the planar tally flux approximation is statistically equivalent ($<1\%$ difference on average) to that of the appoximate analytic solution obtained by the regular tally with a significantly greater number of forward particles. 
 
-\begin{figure} [h!]
-	\centering
-	\includegraphics[height=3in]{VarReduction/plots/plane_avg_x=0_5.png}
-	\caption{A graph showing tally variance estimates for the $YZ$ plane tally centered at $X=0.5$. }
-	\label{fig:plane_avg_x=0.5.png}
-\end{figure}
-
-It should also be noted that the planar tally recieves approximately four orders of magnitude more particles than the regular tally. For these problems with higher opacities, a more complex problem geometry, and/or limited particle histories, the planar tally becomes of more use. However, as shown in Fig. \ref{fig:plane_avg_x=0.5.png}, in cases with large numbers of particle histories and small distances to tally, the variance of the response method is statistically similar to the regular tally methods. In such cases where this was tested, it was shown that the response function method could significantly underestimate the `true' flux.
+It should also be noted that the planar tally recieves approximately four orders of magnitude more particles than the regular tally. For these problems with higher opacities, a more complex problem geometry, and/or limited particle histories, the planar tally becomes of more use. 
 
 \begin{figure} [h!]
 	\centering
