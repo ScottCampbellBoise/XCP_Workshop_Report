@@ -6,3 +6,12 @@
 
 *.aux
 
+*.bbl
+
+*.blg
+
+*.tdo
+
+*.toc
+
+*.out
