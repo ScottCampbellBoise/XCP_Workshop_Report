@@ -322,26 +322,7 @@ If, instead, the selected event was a cell boundary crossing ($d_{event} \equiv 
 To maintain an unbiased simulation, at the end of the timestep after all particles have been transported, the total initial energy of all the census particles are redistributed randomly to a smaller number of representative particles. This allows for additional particles to be transported within each timestep. Additionally, the temperature $T$ of each cell is updated accd. to Eq. \ref{Eq: cell_T}. The timestep information is then updated and the above scheme is repeated for the entirety of the simulation. 
 
 \section{Test Problem}
-To check the validity of the response function method, a point source problem was devised where the analytic flux solution could be estimated. This problem consisted of a $0.1 \times 0.1 \times 0.1$~cm$^3$ `source' cube, encased in a $1.0 \times 1.0 \times 1.0$~cm$^3$ cube. The entire problem was then surrounded by a vacuum to mitigate all escaping flux from returning to the problem domain. The parameters of the test problem are shown in Table~\ref{tab:point_source_params}.
-
-\begin{table}[h!]
-	\centering
-	\begin{tabular}{lcc}
-		\toprule
-		Parameter & Heated `Source' Cells & Surrounding Cells \\ 
-		\midrule
-		$\rho$ $(\frac{kg}{cm^{3}})$ & 1.0 & 1.0 \\ 
-		$c_{v}$ $(\frac{GJ}{keV \cdot kg})$ & 100 & 0.01 \\
-		$\sigma$ $(\frac{1}{cm})$ & 0.1 & 0.1 \\
-		$T_{e,~0}$ $(keV)$ & 1.0 & 0.01 \\ 
-		$T_{r,~0}$ $(keV)$ & 1.0 & 0.01 \\
-		\bottomrule
-	\end{tabular}
-	\caption{}
-	\label{tab:point_source_params}
-\end{table}
-
- The heat capacity of the heated `source' and material was set to be high such that the re-emission of photons would be small compared to the source. In order to calculate the response function, $10,000$ particles were traced through the mesh to generate the $\sigma_{r}$ values for each cell. A spherical tally surface was centered at the origin of the heated cell with a radius of $1.0$~cm. 
+To check the validity of the response function method, a steady state homogenous point source problem with a fixed opacity was devised where the analytic flux solution could be estimated. This problem consisted of a $0.1 \times 0.1 \times 0.1$~cm$^3$ `source' cube, encased in a $1.0 \times 1.0 \times 1.0$~cm$^3$ cube. The entire problem was then surrounded by a vacuum to mitigate all escaping flux from returning to the problem domain. In order to calculate the response function, $10,000$ particles were traced through the mesh to generate the $\sigma_{r}$ values for each cell. A spherical tally surface was centered at the origin of the heated cell with a radius of $1.0$~cm. 
 
 The validity of our method was tested using measures of average flux and variance as well as the figure of merit (FoM) of the method. These quantities were measured as a function of the number of particles run in the forward simulation. 
 
